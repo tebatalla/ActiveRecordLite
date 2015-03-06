@@ -70,7 +70,9 @@ class SQLObject
     # ...
     params.each do |attr_name, value|
       attr_sym = attr_name.to_sym
-      raise "unknown attribute '#{attr_name}'" unless self.class.columns.include?(attr_sym)
+      unless self.class.columns.include?(attr_sym)
+        raise "unknown attribute '#{attr_name}'"
+      end
       self.send("#{attr_sym}=", value)
     end
   end
@@ -104,7 +106,9 @@ class SQLObject
 
   def update
     # ...
-    set_string = self.class.columns.map {|attr_name| "#{attr_name} = ?" }.join(',')
+    set_string = self.class.columns.map do |attr_name|
+      "#{attr_name} = ?"
+      end.join(',')
     DBConnection.execute(<<-SQL,*attribute_values)
     UPDATE
       #{self.class.table_name}
