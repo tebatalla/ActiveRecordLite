@@ -9,7 +9,7 @@ module Associatable
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
       source_options = through_options.model_class.assoc_options[source_name]
-      source_options.model_class.parse_all(DBConnection.execute(<<-SQL, self.send(through_options.foreign_key)))[0]
+      source_options.model_class.parse_all(DBConnection.execute(<<-SQL, send(through_options.foreign_key)))[0]
         SELECT
           #{source_options.table_name}.*
         FROM
