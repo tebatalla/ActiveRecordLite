@@ -9,7 +9,9 @@ module Associatable
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
       source_options = through_options.model_class.assoc_options[source_name]
-      source_options.model_class.parse_all(DBConnection.execute(<<-SQL, send(through_options.foreign_key)))[0]
+      fk = through_options.foreign_key
+      model = source_options.model_class
+      model.parse_all(DBConnection.execute(<<-SQL, send(fk))).first
         SELECT
           #{source_options.table_name}.*
         FROM
